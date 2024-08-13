@@ -6,7 +6,7 @@ spring:
   application:
     name: MugenInventory
   datasource:
-    url: jdbc:mysql:///linshi
+    url: jdbc:mysql:///mugen_rskr
     username: root
     password: Inaba
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -136,6 +136,7 @@ public class AdminController {
         InputStream inputStream = file.getInputStream();
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         List<Admin> adminList = reader.readAll(Admin.class);
+        adminList = adminList.stream().map(admin -> admin.setPassword(encoder.encode(ParameterConstant.DEFAULT_PASSWORD))).toList();
         return RestBean.messageHandle(adminList, service::saveHandler);
     }
 }

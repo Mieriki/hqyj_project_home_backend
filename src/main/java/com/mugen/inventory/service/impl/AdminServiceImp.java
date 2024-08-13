@@ -56,6 +56,7 @@ public class AdminServiceImp extends ServiceImpl<AdminMapper, Admin> implements 
 
     @Override
     public String saveHandler(Admin admin) {
+        if (mapper.selectCount(new QueryWrapper<Admin>().eq("user_name", admin.getUserName())) > 0) throw new InternalAuthenticationServiceException("用户名已存在");
         if (this.save(admin))
             return null;
         else
@@ -64,6 +65,7 @@ public class AdminServiceImp extends ServiceImpl<AdminMapper, Admin> implements 
 
     @Override
         public String saveHandler(List<Admin> adminList) {
+        if (mapper.selectCount(new QueryWrapper<Admin>().in("user_name", adminList.stream().map(Admin::getUserName).toList())) > 0) throw new InternalAuthenticationServiceException("用户名已存在");
         if (this.saveBatch(adminList))
             return null;
         else

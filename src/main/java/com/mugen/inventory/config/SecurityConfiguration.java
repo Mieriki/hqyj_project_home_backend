@@ -35,6 +35,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Security configuration
+ * @ Mieriki
+ */
 @Log4j2
 @Configuration
 @EnableWebSecurity
@@ -57,12 +61,18 @@ public class SecurityConfiguration {
     @Value("${spring.web.cors.method}")
     List<String> methods;
 
+    /**
+     * security 基本配置
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf -> conf
                         .requestMatchers(HttpMethod.GET, "/*/get/excel").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/admins/put/enabled").hasAnyRole("role_admin")
+                        .requestMatchers(HttpMethod.POST, "/admins/put/enabled").hasAnyRole("admin")
                         .anyRequest().authenticated()
                 )
                 .formLogin(conf -> conf
@@ -89,6 +99,14 @@ public class SecurityConfiguration {
                 .build();
     }
 
+    /**
+     * 登录成功的处理方法
+     * @param request http请求
+     * @param response http响应
+     * @param authentication 认证信息
+     * @throws IOException IOException
+     * @throws ServletException ServletException
+     */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         Admin admin = hostHolder.getAdmin();
@@ -100,17 +118,46 @@ public class SecurityConfiguration {
         this.responseMessage(response, RestBean.success(vo, "Success").asJsonString());
     }
 
+    /**
+     * 拒绝访问的处理方法
+     * @param request http请求
+     * @param response http响应
+     * @param exception 认证异常
+     * @throws IOException IOException
+     */
     public void onAccessDeny(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws IOException {
         this.responseMessage(response, RestBean.failure(RestBean.FORBIDDEN, exception.getMessage()).asJsonString());
     }
+
+    /**
+     * 未认证时的处理方法
+     * @param request http请求
+     * @param response http响应
+     * @param exception 认证异常
+     * @throws IOException IOException
+     */
     public void onUnauthorized(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         this.responseMessage(response, RestBean.failure(RestBean.UNAUTHORIZED, exception.getMessage()).asJsonString());
     }
 
+    /**
+     * 认证失败的处理方法
+     * @param request http请求
+     * @param response http响应
+     * @param exception 认证异常
+     * @throws IOException IOException
+     */
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         this.responseMessage(response, RestBean.failure(RestBean.UNAUTHORIZED, exception.getMessage()).asJsonString());
     }
 
+    /**
+     * 注销成功的处理方法
+     * @param request http请求
+     * @param response http响应
+     * @param authentication 认证信息
+     * @throws IOException IOException
+     */
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String authorization = request.getHeader("Authorization");
         if (utils.invalidataJwt(authorization)) {
@@ -120,6 +167,11 @@ public class SecurityConfiguration {
         }
     }
 
+    /**
+     * 抽象的响应方法
+     * @param response http响应
+     * @param message Json格式的响应消息
+     */
     private void responseMessage(HttpServletResponse response, String message) {
         try {
             response.setContentType("application/json;charset=utf-8");
@@ -129,6 +181,10 @@ public class SecurityConfiguration {
         }
     }
 
+    /**
+     * 跨域配置
+     * @return CorsConfigurationSource
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
