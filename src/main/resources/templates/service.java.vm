@@ -1,0 +1,27 @@
+package ${package.Service};
+
+import ${package.Entity}.${entity};
+import ${superServiceClassPackage};
+
+import java.util.List;
+
+/**
+ * <p>
+ * $!{table.comment} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.serviceName} : ${superServiceClass}<${entity}>
+#else
+public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
+    String saveHandler(${entity} ${entity.toLowerCase()});
+    String saveHandler(List<${entity}> ${entity.toLowerCase()}List);
+    String modifyHandler(${entity} ${entity.toLowerCase()});
+    String modifyHandler(List<${entity}> ${entity.toLowerCase()}List);
+    String removeHandler(Integer id);
+    String removeHandler(List<Integer> idList);
+}
+#end

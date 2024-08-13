@@ -1,0 +1,38 @@
+server:
+  port: 8000
+  servlet:
+    context-path: /mugen/api
+spring:
+  application:
+    name: MugenInventory
+  datasource:
+    url: jdbc:mysql:///linshi
+    username: root
+    password: Inaba
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  security:
+    filter:
+      order: -100
+    jwt:
+      key: ajiskyuxhjl
+      expire: 7
+  web:
+    cors:
+      origin: http://localhost:3000, http://localhost:5173, http://localhost:4173
+      header: Authorization, Content-Type,
+      method: GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE, PATCH
+      exposed: Authorization, Content-Disposition
+mybatis-plus:
+  #配置Mapper映射文件
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  # 配置MyBatis数据返回类型别名（默认别名是类名）
+  type-aliases-package: com.hqyj.server.entity
+#    日志输出
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html # localhost:8000/mugen/api/swagger-ui.html

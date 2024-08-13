@@ -1,0 +1,82 @@
+package ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+#if(${generateService})
+import ${package.Service}.${table.serviceName};
+#end
+import com.mugen.inventory.utils.constant.InventoryMessageConstant;
+import jakarta.annotation.Resource;
+import ${superServiceImplClassPackage};
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Service
+@Transactional
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>()#if(${generateService}), ${table.serviceName}#end {
+
+}
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}>#if(${generateService}) implements ${table.serviceName}#end {
+    @Resource
+    private ${table.mapperName} mapper;
+
+    @Override
+    public String saveHandler(${entity} ${entity.toLowerCase()}) {
+        if (this.save(${entity.toLowerCase()}))
+            return null;
+        else
+            return InventoryMessageConstant.SAVE_FAILURE_MESSAGE;
+    }
+
+    @Override
+        public String saveHandler(List<${entity}> ${entity.toLowerCase()}List) {
+        if (this.saveBatch(${entity.toLowerCase()}List))
+            return null;
+        else
+          return InventoryMessageConstant.SAVE_FAILURE_MESSAGE;
+    }
+
+    @Override
+    public String modifyHandler(${entity} ${entity.toLowerCase()}) {
+        if (this.updateById(${entity.toLowerCase()}))
+            return null;
+        else
+            return InventoryMessageConstant.MODIFY_FAILURE_MESSAGE;
+    }
+
+    @Override public String modifyHandler(List<${entity}> ${entity.toLowerCase()}List) {
+        if (this.updateBatchById(${entity.toLowerCase()}List))
+            return null;
+        else
+            return InventoryMessageConstant.MODIFY_FAILURE_MESSAGE;
+    }
+
+    @Override
+    public String removeHandler(Integer id) {
+        if (this.removeById(id))
+            return null;
+        else
+            return InventoryMessageConstant.REMOVE_FAILURE_MESSAGE;
+    }
+
+    @Override
+    public String removeHandler(List<Integer> idList) {
+        if (this.removeByIds(idList))
+            return null;
+        else
+            return InventoryMessageConstant.REMOVE_FAILURE_MESSAGE;
+    }
+}
+#end
