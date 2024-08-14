@@ -5,18 +5,21 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.mugen.inventory.annotation.LoggerPermission;
 import com.mugen.inventory.entity.Admin;
 import com.mugen.inventory.entity.model.vo.request.AdminQueryPageVo;
 import com.mugen.inventory.entity.model.vo.response.AdminPageVo;
 import com.mugen.inventory.entity.model.vo.response.AuthorizeVO;
 import com.mugen.inventory.service.AdminService;
 import com.mugen.inventory.utils.JwtUtils;
+import com.mugen.inventory.utils.constant.JwtConstant;
 import com.mugen.inventory.utils.constant.ParameterConstant;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -56,8 +60,11 @@ public class AdminController {
     @Resource
     private JwtUtils utils;
 
+    @Resource
+    StringRedisTemplate template;
+
     @GetMapping("/get")
-    public <T>RestBean<List> list(){
+    public <T>RestBean<List<Admin>> list(){
         return RestBean.success(service.list());
     }
 
@@ -72,6 +79,7 @@ public class AdminController {
         return RestBean.success(service.getById(id));
     }
 
+    @LoggerPermission(operation = "注册")
     @PostMapping("/post")
     public <T>RestBean<Void> save(@RequestBody @Validated Admin vo) {
         vo.setPassword(encoder.encode(ParameterConstant.DEFAULT_PASSWORD))
@@ -80,21 +88,27 @@ public class AdminController {
         return RestBean.messageHandle(vo, service::saveHandler);
     }
 
+    @LoggerPermission(operation = "用户状态更改")
     @PostMapping("/put/enabled")
     public <T>RestBean<Void> modifyEnabled(@RequestBody @Validated Admin vo) {
+        if (!vo.getEnabled())
+            template.opsForValue().set(JwtConstant.JWT_FORCE_LOGOUT + vo.getId(), "", 7, TimeUnit.DAYS);
         return RestBean.messageHandle(vo, service::modifyHandler);
     }
 
+    @LoggerPermission(operation = "修改用户信息")
     @PostMapping("/put")
     public <T>RestBean<Void> modify(@RequestBody @Validated Admin vo) {
         return RestBean.messageHandle(vo, service::modifyHandler);
     }
 
+    @LoggerPermission(operation = "删除用户")
     @GetMapping("/delete/{id}")
     public <T>RestBean<Void> remove(@PathVariable Integer id) {
         return RestBean.messageHandle(id, service::removeHandler);
     }
 
+    @LoggerPermission(operation = "批量删除用户")
     @PostMapping("/delete")
     public <T>RestBean<Void> remove(@RequestBody List<Integer> idList) {
         return RestBean.messageHandle(idList, service::removeHandler);
@@ -130,6 +144,7 @@ public class AdminController {
         writer.close();
     }
 
+    @LoggerPermission(operation = "批量导入用户")
     @SneakyThrows
     @PostMapping("/post/excel")
     public <T> RestBean<Void> handleFileUpload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {

@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class CodeGenerator {
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql:///linshi", "root", "Inaba")
+        FastAutoGenerator.create("jdbc:mysql:///mugen_rskr", "root", "Inaba")
                 .globalConfig(builder -> {
                     builder.author("Mieriki") // 设置作者
 //                            .enableSwagger() // 开启 swagger 模式
@@ -49,7 +49,7 @@ public class CodeGenerator {
 
                 )
                 .strategyConfig(builder ->
-                        builder.addInclude("t_sale_list_goods") // 设置需要生成的表名
+                        builder.addInclude("t_department") // 设置需要生成的表名
                                 .addTablePrefix("t_", "c_") // 设置过滤表前缀
                                 .entityBuilder()
                                 .enableLombok() // 启用 Lombok

@@ -1,6 +1,7 @@
 package com.mugen.inventory.controller.exception;
 
 
+import com.mugen.inventory.exception.UserForceLogoutException;
 import com.mugen.inventory.utils.RestBean;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.MyBatisSystemException;

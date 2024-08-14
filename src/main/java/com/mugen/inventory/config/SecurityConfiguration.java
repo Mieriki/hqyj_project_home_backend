@@ -2,8 +2,10 @@ package com.mugen.inventory.config;
 
 
 import com.mugen.inventory.entity.Admin;
+import com.mugen.inventory.entity.Syslog;
 import com.mugen.inventory.entity.model.vo.response.AuthorizeVO;
 import com.mugen.inventory.filter.JwtAuthorizeFilter;
+import com.mugen.inventory.service.SyslogService;
 import com.mugen.inventory.utils.HostHolder;
 import com.mugen.inventory.utils.JwtUtils;
 import com.mugen.inventory.utils.RestBean;
@@ -33,6 +35,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,6 +63,9 @@ public class SecurityConfiguration {
 
     @Value("${spring.web.cors.method}")
     List<String> methods;
+
+    @Resource
+    SyslogService syslogService;
 
     /**
      * security 基本配置
@@ -108,6 +114,8 @@ public class SecurityConfiguration {
      * @throws ServletException ServletException
      */
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        Date startDate = new Date();
+        long startTime = System.currentTimeMillis();
         User user = (User) authentication.getPrincipal();
         Admin admin = hostHolder.getAdmin();
         String token = utils.createJwt(user, admin.getId(), admin.getUserName());
@@ -116,6 +124,17 @@ public class SecurityConfiguration {
             v.setToken(token);
         });
         this.responseMessage(response, RestBean.success(vo, "Success").asJsonString());
+
+        long endTime = System.currentTimeMillis();
+        syslogService.save(Syslog.builder()
+                .operation("登录")
+                .method("com.mugen.inventory.service.impl.AdminServiceImpl.loadAdminByUsername()")
+                .params("Admin(id=" + admin.getId() + ",userName=" + admin.getUserName() + ")")
+                .userName(admin.getUserName())
+                .time((int) (endTime - startTime))
+                .createTime(startDate)
+                .ip(request.getRemoteAddr())
+                .build());
     }
 
     /**
