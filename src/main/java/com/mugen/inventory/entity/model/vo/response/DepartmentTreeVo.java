@@ -33,5 +33,5 @@ public class DepartmentTreeVo {
     private Boolean isParent;
 
     // 孩子节点
-    Department child;
+    Department children;
 }

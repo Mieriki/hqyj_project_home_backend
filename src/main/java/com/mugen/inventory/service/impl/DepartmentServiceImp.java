@@ -10,7 +10,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -73,10 +76,33 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
             return InventoryMessageConstant.REMOVE_FAILURE_MESSAGE;
     }
 
+    //        List<GoodsTypeTreeVo> goodsTypeTreeVoList = mapper.selectTree();
+    //        List<GoodsTypeTreeVo> result = new ArrayList<>();
+    //        // 构建用于存放根节点的 Map，key 是父节点的 id，value 是父节点的 children 列表
+    //        Map<Integer, List<GoodsTypeTreeVo>> parentMap = new HashMap<>();
+    //
+    //        // 遍历原始数据，将每个节点按照其父节点 id 放入 parentMap
+    //        for (GoodsTypeTreeVo node : goodsTypeTreeVoList) {
+    //            if (node.getPId() == -1) {
+    //                // 如果 pid 为 -1，则认为是顶层节点，直接加入 result 中
+    //                result.add(node);
+    //            } else {
+    //                // 否则将节点放入其父节点对应的 children 列表中
+    //                parentMap.computeIfAbsent(node.getPId(), k -> new ArrayList<>()).add(node);
+    //            }
+    //        }
+    //
+    //        // 递归构建树状结构
+    //        buildTree(result, parentMap);
+    //
+    //        return result;
     @Override
     public List<DepartmentTreeVo> queryTree() {
         List<DepartmentTreeVo> departmentTreeVoList = mapper.selectList(null)
                 .stream().map(department -> department.asViewObject(DepartmentTreeVo.class)).toList();
+        List<DepartmentTreeVo> result = new ArrayList<>();
+        // 构建用于存放根节点的 Map，key 是父节点的 id，value 是父节点的 children 列表
+        Map<Integer, List<DepartmentTreeVo>> parentMap = new HashMap<>();
         return null;
     }
 }
