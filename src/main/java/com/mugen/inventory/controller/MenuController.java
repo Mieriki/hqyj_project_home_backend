@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.mugen.inventory.annotation.LoggerPermission;
 import com.mugen.inventory.entity.Menu;
 import com.mugen.inventory.entity.model.vo.request.MenuQueryVo;
 import com.mugen.inventory.entity.model.vo.request.RoleMenuModifyVo;
@@ -56,16 +57,19 @@ public class MenuController {
         return RestBean.success(service.getById(id));
     }
 
+    @LoggerPermission(operation = "新增菜单")
     @PostMapping("/post")
     public <T>RestBean<Void> save(@RequestBody @Validated Menu vo) {
         return RestBean.messageHandle(vo, service::saveHandler);
     }
 
+    @LoggerPermission(operation = "修改菜单")
     @PostMapping("/put")
     public <T>RestBean<Void> modify(@RequestBody @Validated Menu vo) {
         return RestBean.messageHandle(vo, service::modifyHandler);
     }
 
+    @LoggerPermission(operation = "删除菜单")
     @GetMapping("/delete/{id}")
     public <T>RestBean<Void> remove(@PathVariable Integer id) {
         return RestBean.messageHandle(id, service::removeHandler);
@@ -101,6 +105,7 @@ public class MenuController {
         return RestBean.success(service.queryMenuListChicked(id));
     }
 
+    @LoggerPermission(operation = "修改角色菜单")
     @PostMapping("/put/tree")
     public <T>RestBean<Void> modifyTree(@RequestBody @Validated RoleMenuModifyVo vo) {
         return RestBean.messageHandle(vo, service::modifyTreeHandler);

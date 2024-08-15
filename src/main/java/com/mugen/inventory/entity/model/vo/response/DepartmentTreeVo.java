@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,5 +35,5 @@ public class DepartmentTreeVo {
     private Boolean isParent;
 
     // 孩子节点
-    Department children;
+    List<DepartmentTreeVo> children;
 }

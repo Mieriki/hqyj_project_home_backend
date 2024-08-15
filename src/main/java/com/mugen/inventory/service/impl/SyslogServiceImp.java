@@ -1,6 +1,10 @@
 package com.mugen.inventory.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mugen.inventory.entity.Syslog;
+import com.mugen.inventory.entity.model.vo.request.SyslogQueryVo;
+import com.mugen.inventory.entity.model.vo.response.SyslogPageVo;
 import com.mugen.inventory.mapper.SyslogMapper;
 import com.mugen.inventory.service.SyslogService;
 import com.mugen.inventory.utils.constant.InventoryMessageConstant;
@@ -70,5 +74,17 @@ public class SyslogServiceImp extends ServiceImpl<SyslogMapper, Syslog> implemen
             return null;
         else
             return InventoryMessageConstant.REMOVE_FAILURE_MESSAGE;
+    }
+
+    @Override
+    public SyslogPageVo queryPage(SyslogQueryVo vo) {
+        QueryWrapper<Syslog> queryWrapper = new QueryWrapper<>();
+        if (vo.getOperation() != null && !vo.getOperation().equals(""))
+            queryWrapper.eq("operation", vo.getOperation());
+        queryWrapper
+                .like("user_name", vo.getName())
+                .orderByDesc("id");
+        return new SyslogPageVo(mapper.selectCount(queryWrapper), mapper.selectPage(new Page<>(vo.getCurrentPage(), vo.getPageSize()), queryWrapper).getRecords());
+
     }
 }

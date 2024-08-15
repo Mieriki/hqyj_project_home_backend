@@ -49,7 +49,7 @@ public class CodeGenerator {
 
                 )
                 .strategyConfig(builder ->
-                        builder.addInclude("t_department") // 设置需要生成的表名
+                        builder.addInclude("t_position") // 设置需要生成的表名
                                 .addTablePrefix("t_", "c_") // 设置过滤表前缀
                                 .entityBuilder()
                                 .enableLombok() // 启用 Lombok

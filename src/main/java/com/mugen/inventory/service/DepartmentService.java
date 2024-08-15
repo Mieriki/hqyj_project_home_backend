@@ -2,6 +2,7 @@ package com.mugen.inventory.service;
 
 import com.mugen.inventory.entity.Department;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mugen.inventory.entity.model.vo.request.DepartmentQueryVo;
 import com.mugen.inventory.entity.model.vo.response.DepartmentTreeVo;
 
 import java.util.List;
@@ -21,5 +22,5 @@ public interface DepartmentService extends IService<Department> {
     String modifyHandler(List<Department> departmentList);
     String removeHandler(Integer id);
     String removeHandler(List<Integer> idList);
-    List<DepartmentTreeVo> queryTree();
+    List<DepartmentTreeVo> queryTree(DepartmentQueryVo vo);
 }

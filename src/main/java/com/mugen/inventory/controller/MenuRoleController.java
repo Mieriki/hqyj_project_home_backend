@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.mugen.inventory.annotation.LoggerPermission;
 import com.mugen.inventory.entity.MenuRole;
 import com.mugen.inventory.service.MenuRoleService;
 import jakarta.annotation.Resource;

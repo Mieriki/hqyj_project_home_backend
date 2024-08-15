@@ -2,6 +2,8 @@ package com.mugen.inventory.service;
 
 import com.mugen.inventory.entity.Syslog;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mugen.inventory.entity.model.vo.request.SyslogQueryVo;
+import com.mugen.inventory.entity.model.vo.response.SyslogPageVo;
 
 import java.util.List;
 
@@ -20,4 +22,5 @@ public interface SyslogService extends IService<Syslog> {
     String modifyHandler(List<Syslog> syslogList);
     String removeHandler(Integer id);
     String removeHandler(List<Integer> idList);
+    SyslogPageVo queryPage(SyslogQueryVo vo);
 }

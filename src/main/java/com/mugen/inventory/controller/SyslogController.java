@@ -4,12 +4,16 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mugen.inventory.entity.Syslog;
+import com.mugen.inventory.entity.model.vo.request.SyslogQueryVo;
+import com.mugen.inventory.entity.model.vo.response.SyslogPageVo;
 import com.mugen.inventory.service.SyslogService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +39,7 @@ import java.util.List;
  * @author Mieriki
  * @since 2024-08-13
  */
+@Log4j2
 @RestController
 @RequestMapping("/syslogs")
 public class SyslogController {
@@ -44,6 +49,17 @@ public class SyslogController {
     @GetMapping("/get")
     public <T>RestBean<List<Syslog>> list(){
         return RestBean.success(service.list());
+    }
+
+    @PostMapping("/get")
+    public <T>RestBean<SyslogPageVo> list(@RequestBody SyslogQueryVo vo) {
+        return RestBean.success(service.queryPage(vo));
+    }
+
+    @GetMapping("/get/options")
+    public <T>RestBean<List<String>> queryOptionList() {
+        return RestBean.success(service.list(new QueryWrapper<Syslog>().select("operation"))
+                .stream().map(Syslog::getOperation).distinct().toList());
     }
 
     @GetMapping("/get/{id}")

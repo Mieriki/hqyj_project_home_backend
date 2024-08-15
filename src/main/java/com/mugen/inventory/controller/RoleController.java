@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.mugen.inventory.annotation.LoggerPermission;
 import com.mugen.inventory.entity.Role;
 import com.mugen.inventory.entity.model.vo.request.RoleQueryPageVo;
 import com.mugen.inventory.entity.model.vo.response.RoleOrganizeVo;
@@ -59,16 +60,19 @@ public class RoleController {
         return RestBean.success(service.getById(id));
     }
 
+    @LoggerPermission(operation = "新增角色")
     @PostMapping("/post")
     public <T>RestBean<Void> save(@RequestBody @Validated Role vo) {
         return RestBean.messageHandle(vo, service::saveHandler);
     }
 
+    @LoggerPermission(operation = "修改角色信息")
     @PostMapping("/put")
     public <T>RestBean<Void> modify(@RequestBody @Validated Role vo) {
         return RestBean.messageHandle(vo, service::modifyHandler);
     }
 
+    @LoggerPermission(operation = "删除角色")
     @GetMapping("/delete/{id}")
     public <T>RestBean<Void> remove(@PathVariable Integer id) {
         return RestBean.messageHandle(id, service::removeHandler);
@@ -89,6 +93,7 @@ public class RoleController {
         return RestBean.success(service.queryRoleOrganizeByUserId(id));
     }
 
+    @LoggerPermission(operation = "分配角色")
     @PostMapping("/put/assignment/{id}")
     public <T>RestBean<Void> assignment(@PathVariable Integer id, @RequestBody @Validated List<Integer> idList) {
         service.organizeHandler(id, idList);
