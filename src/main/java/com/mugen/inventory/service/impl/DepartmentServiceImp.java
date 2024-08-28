@@ -2,11 +2,14 @@ package com.mugen.inventory.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mugen.inventory.entity.Department;
+import com.mugen.inventory.entity.Employee;
 import com.mugen.inventory.entity.model.vo.request.DepartmentDeleteVo;
 import com.mugen.inventory.entity.model.vo.request.DepartmentQueryVo;
 import com.mugen.inventory.entity.model.vo.request.DepartmentSaveVo;
 import com.mugen.inventory.entity.model.vo.response.DepartmentTreeVo;
+import com.mugen.inventory.entity.model.vo.response.PosTbVo;
 import com.mugen.inventory.mapper.DepartmentMapper;
+import com.mugen.inventory.mapper.EmployeeMapper;
 import com.mugen.inventory.service.DepartmentService;
 import com.mugen.inventory.utils.constant.InventoryMessageConstant;
 import jakarta.annotation.Resource;
@@ -31,6 +34,9 @@ import java.util.*;
 public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Department> implements DepartmentService {
     @Resource
     private DepartmentMapper mapper;
+
+    @Resource
+    private EmployeeMapper employeeMapper;
 
     @Override
     public String saveHandler(Department department) {
@@ -72,6 +78,7 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
 
     @Override
     public String removeHandler(Integer id) {
+        if (employeeMapper.selectCount(new QueryWrapper<Employee>().eq("departmentId", id)) > 0) return "该部门下存在员工，请先删除员工";
         if (mapper.selectOne(new QueryWrapper<Department>().eq("id", id)).getIsParent())
             return "请先删除下属部门";
         DepartmentDeleteVo vo = DepartmentDeleteVo.builder()
@@ -114,6 +121,11 @@ public class DepartmentServiceImp extends ServiceImpl<DepartmentMapper, Departme
         // 递归构建树状结构
         buildTree(result, parentMap);
         return result;
+    }
+
+    @Override
+    public List<PosTbVo> queryDeptTbList() {
+        return mapper.getDeptTbList();
     }
 
     /**

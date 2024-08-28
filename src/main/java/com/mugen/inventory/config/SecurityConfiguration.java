@@ -78,6 +78,7 @@ public class SecurityConfiguration {
         return http
                 .authorizeHttpRequests(conf -> conf
                         .requestMatchers(HttpMethod.GET, "/*/get/excel").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/leaves/get/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/admins/put/enabled").hasAnyRole("admin")
                         .anyRequest().authenticated()
                 )

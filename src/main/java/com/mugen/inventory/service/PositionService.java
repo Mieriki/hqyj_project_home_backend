@@ -3,6 +3,7 @@ package com.mugen.inventory.service;
 import com.mugen.inventory.entity.Position;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mugen.inventory.entity.model.vo.request.PositionQueryVo;
+import com.mugen.inventory.entity.model.vo.response.PosTbVo;
 import com.mugen.inventory.entity.model.vo.response.PositionPageVo;
 
 import java.util.List;
@@ -23,4 +24,5 @@ public interface PositionService extends IService<Position> {
     String removeHandler(Integer id);
     String removeHandler(List<Integer> idList);
     PositionPageVo queryPage(PositionQueryVo vo);
+    List<PosTbVo> queryPosTbList();
 }

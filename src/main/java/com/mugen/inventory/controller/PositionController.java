@@ -5,9 +5,11 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mugen.inventory.annotation.LoggerPermission;
 import com.mugen.inventory.entity.Position;
 import com.mugen.inventory.entity.model.vo.request.PositionQueryVo;
+import com.mugen.inventory.entity.model.vo.response.PosTbVo;
 import com.mugen.inventory.entity.model.vo.response.PositionPageVo;
 import com.mugen.inventory.service.PositionService;
 import com.mugen.inventory.utils.JwtUtils;
@@ -51,7 +53,7 @@ public class PositionController {
 
     @GetMapping("/get")
     public <T>RestBean<List<Position>> list(){
-        return RestBean.success(service.list());
+        return RestBean.success(service.list(new QueryWrapper<Position>().eq("is_delete", 0)));
     }
 
     @PostMapping("/get")
@@ -134,5 +136,10 @@ public class PositionController {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         List<Position> positionList = reader.readAll(Position.class);
         return RestBean.messageHandle(positionList, service::saveHandler);
+    }
+
+    @GetMapping("/get/pos-tb")
+    public <T> RestBean<List<PosTbVo>> getPosTb() {
+        return RestBean.success(service.queryPosTbList());
     }
 }

@@ -1,11 +1,15 @@
-package ${package.Controller};
+package com.mugen.inventory.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import com.mugen.inventory.entity.${table.entityName};
-import com.mugen.inventory.service.${table.serviceName};
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mugen.inventory.annotation.LoggerPermission;
+import com.mugen.inventory.entity.Employee;
+import com.mugen.inventory.entity.model.vo.request.EmployeeQueryVo;
+import com.mugen.inventory.entity.model.vo.response.EmployeePageVo;
+import com.mugen.inventory.service.EmployeeService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,14 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.annotation.Validated;
 import com.mugen.inventory.utils.RestBean;
-#if(${restControllerStyle})
 import org.springframework.web.bind.annotation.RestController;
-#else
-import org.springframework.stereotype.Controller;
-#end
-#if(${superControllerClassPackage})
-import ${superControllerClassPackage};
-#end
 
 import java.util.Date;
 import java.io.InputStream;
@@ -36,73 +33,80 @@ import java.util.List;
 
 /**
  * <p>
- * #if(${table.comment})${table.comment}#else${table.entityPath}#end 前端控制器
+ * employee 前端控制器
  * </p>
  *
- * @author ${author}
- * @since ${date}
+ * @author Mieriki
+ * @since 2024-08-16
  */
-#if(${restControllerStyle})
 @RestController
-#else
-@Controller
-#end
-@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end#if(true)s#end")
-#if(${kotlin})
-class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
-
-#else
-#if(${superControllerClass})
-public class ${table.controllerName} extends ${superControllerClass} {
-#else
-public class ${table.controllerName} {
-#end
+@RequestMapping("/employees")
+public class EmployeeController {
     @Resource
-    private ${table.serviceName} service;
+    private EmployeeService service;
 
     @GetMapping("/get")
-    public <T> RestBean<List<${table.entityName}>> list(){
+    public <T>RestBean<List<Employee>> list(){
         return RestBean.success(service.list());
     }
 
+    @PostMapping("/get")
+    public <T>RestBean<EmployeePageVo> list(@RequestBody EmployeeQueryVo vo) {
+        return RestBean.success(service.queryPage(vo));
+    }
+
+    @GetMapping("/get/count/male")
+    public <T>RestBean<Long> countMale() {
+        return RestBean.success(service.count(new QueryWrapper<Employee>().eq("gender", "女")));
+    }
+
+    @GetMapping("/get/count/female")
+    public <T>RestBean<Long> countFemale() {
+        return RestBean.success(service.count(new QueryWrapper<Employee>().eq("gender", "男")));
+    }
+
     @GetMapping("/get/{id}")
-    public <T> RestBean<${table.entityName}> query(@PathVariable Integer id) {
+    public <T>RestBean<Employee> query(@PathVariable Integer id) {
         return RestBean.success(service.getById(id));
     }
 
+    @LoggerPermission(operation = "新增员工")
     @PostMapping("/post")
-    public <T> RestBean<Void> save(@RequestBody @Validated ${table.entityName} vo) {
+    public <T>RestBean<Void> save(@RequestBody @Validated Employee vo) {
         return RestBean.messageHandle(vo, service::saveHandler);
     }
 
+    @LoggerPermission(operation = "修改员工信息")
     @PostMapping("/put")
-    public <T> RestBean<Void> modify(@RequestBody @Validated ${table.entityName} vo) {
+    public <T>RestBean<Void> modify(@RequestBody @Validated Employee vo) {
         return RestBean.messageHandle(vo, service::modifyHandler);
     }
 
+    @LoggerPermission(operation = "删除员工")
     @GetMapping("/delete/{id}")
-    public <T> RestBean<Void> remove(@PathVariable Integer id) {
+    public <T>RestBean<Void> remove(@PathVariable Integer id) {
         return RestBean.messageHandle(id, service::removeHandler);
     }
 
+    @LoggerPermission(operation = "批量删除员工")
     @PostMapping("/delete")
-    public <T> RestBean<Void> remove(@RequestBody List<Integer> idList) {
+    public <T>RestBean<Void> remove(@RequestBody List<Integer> idList) {
         return RestBean.messageHandle(idList, service::removeHandler);
     }
 
     @GetMapping("/get/count")
-    public <T> RestBean<Long> count() {
+    public <T>RestBean<Long> count() {
         return RestBean.success(service.count());
     }
 
     @SneakyThrows
     @GetMapping("/get/excel")
     public void exportData(HttpServletResponse response) {
-        String fileName = "${table.entityName}_" + new Date() + ".xlsx";
+        String fileName = "Employee_" + new Date() + ".xlsx";
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
         OutputStream out = response.getOutputStream();
-        List<${table.entityName}> rowss = CollUtil.newArrayList();
+        List<Employee> rowss = CollUtil.newArrayList();
         rowss.addAll(service.list());
         ExcelWriter writer= ExcelUtil.getBigWriter();
         writer.write(rowss);
@@ -110,13 +114,13 @@ public class ${table.controllerName} {
         writer.close();
     }
 
+    @LoggerPermission(operation = "批量导入员工信息")
     @SneakyThrows
     @PostMapping("/post/excel")
     public <T> RestBean<Void> handleFileUpload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         InputStream inputStream = file.getInputStream();
         ExcelReader reader = ExcelUtil.getReader(inputStream);
-        List<${entity}> ${entity.toLowerCase()}List = reader.readAll(${entity}.class);
-        return RestBean.messageHandle(${entity.toLowerCase()}List, service::saveHandler);
+        List<Employee> employeeList = reader.readAll(Employee.class);
+        return RestBean.messageHandle(employeeList, service::saveHandler);
     }
 }
-#end

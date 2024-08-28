@@ -69,13 +69,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.mindrot/jbcrypt &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.mindrot</groupId>-->
-<!--            <artifactId>jbcrypt</artifactId>-->
-<!--            <version>0.4</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
@@ -118,43 +111,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.shiro</groupId>-->
-<!--            <artifactId>shiro-spring</artifactId>-->
-<!--            <classifier>jakarta</classifier>-->
-<!--            <version>1.13.0</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.apache.shiro</groupId>-->
-<!--                    <artifactId>shiro-core</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.apache.shiro</groupId>-->
-<!--                    <artifactId>shiro-web</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.shiro</groupId>-->
-<!--            <artifactId>shiro-core</artifactId>-->
-<!--            <classifier>jakarta</classifier>-->
-<!--            <version>1.13.0</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.shiro</groupId>-->
-<!--            <artifactId>shiro-web</artifactId>-->
-<!--            <classifier>jakarta</classifier>-->
-<!--            <version>1.13.0</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.apache.shiro</groupId>-->
-<!--                    <artifactId>shiro-core</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.flowable/flowable-spring-boot-starter -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
+            <version>7.0.1</version>
+        </dependency>
+        <!-- gson google json -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
+        </dependency>
     </dependencies>
 
     <build>

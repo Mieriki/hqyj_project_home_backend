@@ -36,3 +36,13 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html # localhost:8000/mugen/api/swagger-ui.html
+github:
+  bucket:
+    # 配置仓库所属的用户名（如果是自己创建的，就是自己的用户名）
+    user: "Mieriki"
+    # 配置仓库名称
+    repository: "SuperMkFileServe"
+    # 配置自己的acccessToken
+    access-token: ""
+    url: "https://cdn.jsdelivr.net/gh/${github.bucket.user}/${github.bucket.repository}/"
+    api: "https://api.github.com/repos/${github.bucket.user}/${github.bucket.repository}/contents/"

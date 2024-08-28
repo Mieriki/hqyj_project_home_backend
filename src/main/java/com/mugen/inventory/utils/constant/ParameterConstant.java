@@ -8,4 +8,11 @@ public class ParameterConstant {
     public static final String USRE_DEFAULT_SLOT = "mugen_inventory";
 
     public static final String DEFAULT_PASSWORD = "123456";
+
+    public static final String LEAVE_ADMIN_FLOW_ID = "leave:admin:flow:";
+
+    public static final String LEAVE_ADMIN_TASK_ID = "leave:admin:id:";
+
+    public static final String LEAVE_ADMIN_OVER = "leave:admin:over:";
+
 }

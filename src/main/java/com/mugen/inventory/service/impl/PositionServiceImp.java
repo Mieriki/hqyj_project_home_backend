@@ -3,10 +3,13 @@ package com.mugen.inventory.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mugen.inventory.entity.Admin;
+import com.mugen.inventory.entity.Employee;
 import com.mugen.inventory.entity.Position;
 import com.mugen.inventory.entity.model.vo.request.PositionQueryVo;
+import com.mugen.inventory.entity.model.vo.response.PosTbVo;
 import com.mugen.inventory.entity.model.vo.response.PositionPageVo;
 import com.mugen.inventory.entity.model.vo.response.PositionVo;
+import com.mugen.inventory.mapper.EmployeeMapper;
 import com.mugen.inventory.mapper.PositionMapper;
 import com.mugen.inventory.service.AdminService;
 import com.mugen.inventory.service.PositionService;
@@ -33,6 +36,9 @@ import java.util.stream.Collectors;
 public class PositionServiceImp extends ServiceImpl<PositionMapper, Position> implements PositionService {
     @Resource
     private PositionMapper mapper;
+
+    @Resource
+    private EmployeeMapper employeeMapper;
 
     @Resource
     AdminService adminService;
@@ -70,7 +76,11 @@ public class PositionServiceImp extends ServiceImpl<PositionMapper, Position> im
 
     @Override
     public String removeHandler(Integer id) {
-        if (this.removeById(id))
+        if (employeeMapper.selectCount(new QueryWrapper<Employee>().eq("posId", id)) > 0) return "该岗位下存在员工，请先删除员工后再删除岗位";
+        if (this.updateById(Position.builder()
+               .id(id)
+               .isDelete(true)
+               .build()))
             return null;
         else
             return InventoryMessageConstant.REMOVE_FAILURE_MESSAGE;
@@ -78,7 +88,13 @@ public class PositionServiceImp extends ServiceImpl<PositionMapper, Position> im
 
     @Override
     public String removeHandler(List<Integer> idList) {
-        if (this.removeByIds(idList))
+        if (employeeMapper.selectCount(new QueryWrapper<Employee>().in("posId", idList)) > 0) return "该岗位下存在员工，请先删除员工后再删除岗位";
+        if (this.updateBatchById(idList.stream()
+               .map(id -> Position.builder()
+                       .id(id)
+                       .isDelete(true)
+                       .build())
+                .toList()))
             return null;
         else
             return InventoryMessageConstant.REMOVE_FAILURE_MESSAGE;
@@ -101,5 +117,10 @@ public class PositionServiceImp extends ServiceImpl<PositionMapper, Position> im
                         .map(position -> position.asViewObject(PositionVo.class, v -> v.setOperationName(usernameMap.get(position.getOperationId()))))
                         .toList()
         );
+    }
+
+    @Override
+    public List<PosTbVo> queryPosTbList() {
+        return mapper.selectPosTbList();
     }
 }

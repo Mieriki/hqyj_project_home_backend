@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class WebConfiguration {
@@ -51,4 +52,10 @@ public class WebConfiguration {
         // 如果有多数据源可以不配具体类型, 否则都建议配上具体的 DbType
         return interceptor;
     }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
 }

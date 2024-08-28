@@ -1,11 +1,14 @@
-package ${package.Controller};
+package com.mugen.inventory.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import com.mugen.inventory.entity.${table.entityName};
-import com.mugen.inventory.service.${table.serviceName};
+import com.mugen.inventory.annotation.LoggerPermission;
+import com.mugen.inventory.entity.Nation;
+import com.mugen.inventory.entity.model.vo.request.NationQueryVo;
+import com.mugen.inventory.entity.model.vo.response.NationPageVo;
+import com.mugen.inventory.service.NationService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,14 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.annotation.Validated;
 import com.mugen.inventory.utils.RestBean;
-#if(${restControllerStyle})
 import org.springframework.web.bind.annotation.RestController;
-#else
-import org.springframework.stereotype.Controller;
-#end
-#if(${superControllerClassPackage})
-import ${superControllerClassPackage};
-#end
 
 import java.util.Date;
 import java.io.InputStream;
@@ -36,73 +32,70 @@ import java.util.List;
 
 /**
  * <p>
- * #if(${table.comment})${table.comment}#else${table.entityPath}#end 前端控制器
+ * nation 前端控制器
  * </p>
  *
- * @author ${author}
- * @since ${date}
+ * @author Mieriki
+ * @since 2024-08-16
  */
-#if(${restControllerStyle})
 @RestController
-#else
-@Controller
-#end
-@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end#if(true)s#end")
-#if(${kotlin})
-class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
-
-#else
-#if(${superControllerClass})
-public class ${table.controllerName} extends ${superControllerClass} {
-#else
-public class ${table.controllerName} {
-#end
+@RequestMapping("/nations")
+public class NationController {
     @Resource
-    private ${table.serviceName} service;
+    private NationService service;
 
     @GetMapping("/get")
-    public <T> RestBean<List<${table.entityName}>> list(){
+    public <T>RestBean<List<Nation>> list(){
         return RestBean.success(service.list());
     }
 
+    @PostMapping("/get")
+    public <T>RestBean<NationPageVo> list(@RequestBody NationQueryVo vo) {
+        return RestBean.success(service.queryPage(vo));
+    }
+
     @GetMapping("/get/{id}")
-    public <T> RestBean<${table.entityName}> query(@PathVariable Integer id) {
+    public <T>RestBean<Nation> query(@PathVariable Integer id) {
         return RestBean.success(service.getById(id));
     }
 
+    @LoggerPermission(operation = "新增民族")
     @PostMapping("/post")
-    public <T> RestBean<Void> save(@RequestBody @Validated ${table.entityName} vo) {
+    public <T>RestBean<Void> save(@RequestBody @Validated Nation vo) {
         return RestBean.messageHandle(vo, service::saveHandler);
     }
 
+    @LoggerPermission(operation = "修改民族")
     @PostMapping("/put")
-    public <T> RestBean<Void> modify(@RequestBody @Validated ${table.entityName} vo) {
+    public <T>RestBean<Void> modify(@RequestBody @Validated Nation vo) {
         return RestBean.messageHandle(vo, service::modifyHandler);
     }
 
+    @LoggerPermission(operation = "删除民族")
     @GetMapping("/delete/{id}")
-    public <T> RestBean<Void> remove(@PathVariable Integer id) {
+    public <T>RestBean<Void> remove(@PathVariable Integer id) {
         return RestBean.messageHandle(id, service::removeHandler);
     }
 
+    @LoggerPermission(operation = "批量删除民族")
     @PostMapping("/delete")
-    public <T> RestBean<Void> remove(@RequestBody List<Integer> idList) {
+    public <T>RestBean<Void> remove(@RequestBody List<Integer> idList) {
         return RestBean.messageHandle(idList, service::removeHandler);
     }
 
     @GetMapping("/get/count")
-    public <T> RestBean<Long> count() {
+    public <T>RestBean<Long> count() {
         return RestBean.success(service.count());
     }
 
     @SneakyThrows
     @GetMapping("/get/excel")
     public void exportData(HttpServletResponse response) {
-        String fileName = "${table.entityName}_" + new Date() + ".xlsx";
+        String fileName = "Nation_" + new Date() + ".xlsx";
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
         OutputStream out = response.getOutputStream();
-        List<${table.entityName}> rowss = CollUtil.newArrayList();
+        List<Nation> rowss = CollUtil.newArrayList();
         rowss.addAll(service.list());
         ExcelWriter writer= ExcelUtil.getBigWriter();
         writer.write(rowss);
@@ -110,13 +103,13 @@ public class ${table.controllerName} {
         writer.close();
     }
 
+    @LoggerPermission(operation = "批量导入民族")
     @SneakyThrows
     @PostMapping("/post/excel")
     public <T> RestBean<Void> handleFileUpload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         InputStream inputStream = file.getInputStream();
         ExcelReader reader = ExcelUtil.getReader(inputStream);
-        List<${entity}> ${entity.toLowerCase()}List = reader.readAll(${entity}.class);
-        return RestBean.messageHandle(${entity.toLowerCase()}List, service::saveHandler);
+        List<Nation> nationList = reader.readAll(Nation.class);
+        return RestBean.messageHandle(nationList, service::saveHandler);
     }
 }
-#end

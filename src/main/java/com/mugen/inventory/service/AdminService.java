@@ -23,4 +23,5 @@ public interface AdminService extends IService<Admin> {
     String removeHandler(Integer id);
     String removeHandler(List<Integer> idList);
     AdminPageVo queryPage(AdminQueryPageVo vo);
+    List<String> queryRoleNamebYAdminId(Integer id);
 }

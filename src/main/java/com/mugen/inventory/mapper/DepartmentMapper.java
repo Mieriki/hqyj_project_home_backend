@@ -4,10 +4,13 @@ import com.mugen.inventory.entity.Department;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mugen.inventory.entity.model.vo.request.DepartmentDeleteVo;
 import com.mugen.inventory.entity.model.vo.request.DepartmentSaveVo;
+import com.mugen.inventory.entity.model.vo.response.PosTbVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.mapping.StatementType;
+
+import java.util.List;
 
 /**
  * <p>
@@ -26,4 +29,7 @@ public interface DepartmentMapper extends BaseMapper<Department> {
     @Select("{CALL deleteDep(#{id, mode=IN}, #{result, mode=OUT, jdbcType=INTEGER})}")
     @Options(statementType = StatementType.CALLABLE)
     void deleteOption(DepartmentDeleteVo vo);
+
+    @Select("select p.name, count(p.name) value from t_department p right join t_employee e on p.id = e.departmentId where p.enabled = 1 group by p.name;")
+    List<PosTbVo> getDeptTbList();
 }

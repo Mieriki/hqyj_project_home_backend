@@ -108,4 +108,9 @@ public class AdminServiceImp extends ServiceImpl<AdminMapper, Admin> implements 
         vo.setCurrentPage(ParameterUtils.getCurrentPage(vo.getCurrentPage(), vo.getPageSize()));
         return new AdminPageVo(mapper.selectCountLikeNameOrUsernameAndAddress(vo), mapper.selectPageLikeNameOrUsernameAndAddress(vo));
     }
+
+    @Override
+    public List<String> queryRoleNamebYAdminId(Integer id) {
+        return mapper.selectRoleNamesByAdminId(id);
+    }
 }

@@ -8,6 +8,7 @@ import com.mugen.inventory.annotation.LoggerPermission;
 import com.mugen.inventory.entity.Department;
 import com.mugen.inventory.entity.model.vo.request.DepartmentQueryVo;
 import com.mugen.inventory.entity.model.vo.response.DepartmentTreeVo;
+import com.mugen.inventory.entity.model.vo.response.PosTbVo;
 import com.mugen.inventory.service.DepartmentService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -109,5 +110,10 @@ public class DepartmentController {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         List<Department> departmentList = reader.readAll(Department.class);
         return RestBean.messageHandle(departmentList, service::saveHandler);
+    }
+
+    @GetMapping("/get/dept-tb")
+    public <T> RestBean<List<PosTbVo>> getPosTb() {
+        return RestBean.success(service.queryDeptTbList());
     }
 }
